@@ -33,7 +33,7 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 fh.setFormatter(formatter)
 ch.setFormatter(formatter)
 # add the handlers to the logger
-logger.addHandler(fh)
+# logger.addHandler(fh)
 logger.addHandler(ch)
 
 SLEEP_TIME = 15.212

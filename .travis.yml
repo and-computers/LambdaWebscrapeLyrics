@@ -1,0 +1,7 @@
+deploy:
+  provider: lambda
+  function_name: "webscrape-lyrics"
+  region: "us-east-1"
+  role: "arn:aws:iam::0123456789012:role/lambda_basic_execution"
+  runtime: "python3"
+  handler_name: "handler"

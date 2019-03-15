@@ -1,3 +1,4 @@
+language: python
 deploy:
   provider: lambda
   function_name: "webscrape-lyrics"

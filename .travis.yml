@@ -7,8 +7,10 @@ script:
   - tox
 deploy:
   provider: lambda
+  access_key_id: ${AWS_ACCESS_KEY}
+  secret_access_key: ${AWS_SECRET_KEY}
   function_name: "webscrape-lyrics"
   region: "us-east-1"
-  role: "arn:aws:iam::0123456789012:role/lambda_basic_execution"
+  role: ${AWS_LAMBDA_ROLE}
   runtime: "python3"
   handler_name: "handler"

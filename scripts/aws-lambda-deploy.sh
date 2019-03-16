@@ -25,7 +25,7 @@ ACCESS_KEY=$1
 SECRET_KEY=$2
 RESOURCE_ROLE=$3
 
-AWS_ACCESS_KEY_ID=$ACCESS_KEY AWS_SECRET_ACCESS_KEY=$SECRET_KEY aws lambda create-function \
+AWS_ACCESS_KEY_ID=$ACCESS_KEY AWS_SECRET_ACCESS_KEY=$SECRET_KEY AWS_DEFAULT_REGION="us-east-2" aws lambda create-function \
 	--function-name "webscrape-lyrics" \
 	--handler "lambda_handler.handler" \
 	--timeout 120 \

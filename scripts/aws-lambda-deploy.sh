@@ -12,6 +12,8 @@ echo "removing provided AWS libraries, botocore and boto3"
 
 rm -r lambda_deployment_package/boto3* 
 rm -r lambda_deployment_package/botocore*
+rm -r lambda_deployment_package/tox*
+
 
 echo "zipping deployment package"
 zip -r9 lambda_deployment_package.zip lambda_deployment_package

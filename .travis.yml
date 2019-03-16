@@ -6,11 +6,20 @@ install:
 script:
   - tox
 deploy:
-  provider: lambda
-  access_key_id: ${AWS_ACCESS_KEY}
-  secret_access_key: ${AWS_SECRET_KEY}
-  function_name: "webscrape-lyrics"
-  region: "us-east-1"
-  role: ${AWS_LAMBDA_ROLE}
-  runtime: "python3.6"
-  handler_name: "handler"
+  provider: script
+  script: bash scripts/aws-lambda-deploy.sh ${AWS_ACCESS_KEY} ${AWS_SECRET_KEY} ${AWS_LAMBDA_ROLE}
+  on:
+    branch: master
+  # access_key_id: ${AWS_ACCESS_KEY}
+  # secret_access_key: ${AWS_SECRET_KEY}
+  # function_name: "webscrape-lyrics"
+  # region: "us-east-2"
+  # role: ${AWS_LAMBDA_ROLE}
+  # runtime: "python3.6"
+  # handler_name: "handler"
+  # module_name: "lambda_handler"
+  # description: "Automated Webscraping Lyrics"
+  # memory_size: 128
+  # timeout: 60
+
+

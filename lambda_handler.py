@@ -11,6 +11,7 @@ https://gist.github.com/managedkaos/e3262b80154129cc9a976ee6ee943da3
 import requests
 
 # os is a library for doing operating system things, like looking through file directories
+import os
 import s3fs
 import time
 import logging
@@ -39,8 +40,13 @@ AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.112 Safari/534.30"}
 
 # TODO: create from scrape_config.csv
 
+BUCKETNAME = "bars-api"
+BARSDIR = "just-lyrics"
+
 
 def handler(event, context):
+
+    fs = s3fs.S3FileSystem()
 
     #scrape_config = os.path.join("webscrape", "scrape_config.csv")
 
@@ -83,14 +89,14 @@ def handler(event, context):
 
                 filename = song_link.text.replace(' ', '_').replace("'", '').replace('/', '')
                 filename += ".txt"
-                filename = os.path.join("scraped_data", artists_file_directory, filename)
+                filename = os.path.join(BUCKETNAME, BARSDIR, artists_file_directory, filename)
                 filename = filename.encode('utf-8')
 
                 """
 				a lot of the unspecified excepts are just to catch annoying character encoding bs
 				that comes with webscraping
 				"""
-                if os.path.exists(filename):
+                if fs.exists(filename):
                     try:
                         logger.info('File {} already exists, skipping web request'.format(filename.encode('utf-8')))
                     except:
@@ -116,19 +122,20 @@ def handler(event, context):
                     pass
 
                 # https://stackoverflow.com/questions/12517451/automatically-creating-directories-with-file-output
-                if not os.path.exists(os.path.dirname(filename)):
+                if not fs.exists(os.path.dirname(filename)):
+                    logger.info('{} Does not exist.'.format(os.path.dirname(filename)))
                     try:
-                        os.makedirs(os.path.dirname(filename))
+                        fs.mkdir(os.path.dirname(filename))
                     except OSError as exc:  # Guard against race condition
                         if exc.errno != errno.EEXIST:
                             raise
 
-                f = open(filename, "w+")
+                f = fs.open(filename, "w+")
 
                 # loop through the no clas divs. they contain the lyrics
                 for lyric in new_soup.find_all("div", {"class": None}):
                     try:
-                        f = open(filename, "a")
+                        f = fs.open(filename, "a")
                     except IOError:
                         logger.warning('IOError could not write filename: {}'.format(filename))
                         continue

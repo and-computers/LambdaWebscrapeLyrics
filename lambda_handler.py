@@ -7,7 +7,8 @@ https://gist.github.com/managedkaos/e3262b80154129cc9a976ee6ee943da3
 """
 
 # Requests is a library that allows you to programmatically send out http requests
-import requests
+from botocore.vendored import requests
+
 # os is a library for doing operating system things, like looking through file directories
 import os
 import time
@@ -23,15 +24,15 @@ logger = logging.getLogger('rap_webscraper.{}'.format(__name__))
 
 logger.setLevel(logging.DEBUG)
 # create file handler which logs even debug messages
-fh = logging.FileHandler('rap_webscrape.log')
-fh.setLevel(logging.DEBUG)
+# fh = logging.FileHandler('rap_webscrape.log')
+# fh.setLevel(logging.DEBUG)
 # create console handler with a higher log level
 ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)
 # create formatter and add it to the handlers
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-fh.setFormatter(formatter)
-ch.setFormatter(formatter)
+# fh.setFormatter(formatter)
+# ch.setFormatter(formatter)
 # add the handlers to the logger
 # logger.addHandler(fh)
 logger.addHandler(ch)

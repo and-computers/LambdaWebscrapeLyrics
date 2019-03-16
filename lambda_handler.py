@@ -7,10 +7,11 @@ https://gist.github.com/managedkaos/e3262b80154129cc9a976ee6ee943da3
 """
 
 # Requests is a library that allows you to programmatically send out http requests
-from botocore.vendored import requests
+# from botocore.vendored import requests
+import requests
 
 # os is a library for doing operating system things, like looking through file directories
-import os
+import s3fs
 import time
 import logging
 import random
@@ -23,22 +24,14 @@ from bs4 import BeautifulSoup
 logger = logging.getLogger('rap_webscraper.{}'.format(__name__))
 
 logger.setLevel(logging.DEBUG)
-# create file handler which logs even debug messages
-# fh = logging.FileHandler('rap_webscrape.log')
-# fh.setLevel(logging.DEBUG)
-# create console handler with a higher log level
+
 ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)
-# create formatter and add it to the handlers
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-# fh.setFormatter(formatter)
-# ch.setFormatter(formatter)
-# add the handlers to the logger
-# logger.addHandler(fh)
 logger.addHandler(ch)
 
-SLEEP_TIME = 15.212
-NOISE = (-8.438, 10.173)
+SLEEP_TIME = 9.212
+NOISE = (-8.438, 5.32)
 # act like a mac when requesting url
 headers = {'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) \
 AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.112 Safari/534.30"}

@@ -10,6 +10,8 @@ https://gist.github.com/managedkaos/e3262b80154129cc9a976ee6ee943da3
 # from botocore.vendored import requests
 import requests
 from requests.exceptions import ConnectionError
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 # os is a library for doing operating system things, like looking through file directories
 import os
@@ -49,6 +51,12 @@ def handler(event, context):
 
     fs = s3fs.S3FileSystem()
 
+    sess = requests.Session()
+
+    retries = Retry(total=5, backoff_factor=1.5, status_forcelist=[500, 501, 502, 503, 504])
+
+    sess.mount('http://', HTTPAdapter(max_retries=retries))
+    sess.mount('https://', HTTPAdapter(max_retries=retries))
     #scrape_config = os.path.join("webscrape", "scrape_config.csv")
 
     #df = pd.read_csv(scrape_config)
@@ -70,7 +78,7 @@ def handler(event, context):
         time.sleep(pre_request_sleep)
         # make a request for the data
         try:
-            r = requests.get(url, headers=headers)
+            r = sess.get(url, headers=headers)
         except ConnectionError as ce:
             logger.info('{}'.format(ce))
             continue
@@ -79,13 +87,11 @@ def handler(event, context):
         soup = BeautifulSoup(r.text, "lxml")
 
         # get the songs and links to the lyrics
-        lyrics_map = {}
         artists_file_directory = url.split('/')[-1].replace('.html', '')
         artists_file_directory = artist_name
         for song_link in soup.find_all("a", href=True):
             if len(song_link.text) == 0:
                 continue
-            lyrics_map[song_link.text] = song_link['href']
             lyric_url = song_link['href']
 
             if ".." in lyric_url:
@@ -123,7 +129,7 @@ def handler(event, context):
                 logger.info('Sleeping: {}'.format(this_sleep))
                 time.sleep(this_sleep)
                 try:
-                    response = requests.get(lyric_url, headers=headers)
+                    response = sess.get(lyric_url, headers=headers)
                 except ConnectionError as ce:
                     logger.info('{}'.format(ce))
                     continue
@@ -143,7 +149,7 @@ def handler(event, context):
                         if exc.errno != errno.EEXIST:
                             raise
 
-                f = fs.open(filename, "w+")
+                f = fs.open(filename, "w")
 
                 # loop through the no clas divs. they contain the lyrics
                 for lyric in new_soup.find_all("div", {"class": None}):

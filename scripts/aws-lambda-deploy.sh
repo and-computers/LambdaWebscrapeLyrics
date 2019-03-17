@@ -6,7 +6,7 @@ echo "install requirements.txt"
 mkdir lambda_deployment_package
 cd lambda_deployment_package
 pip install --no-deps --no-cache-dir --compile s3fs --target .
-pip install --no-cache-dir --compile -r ../requirements.txt --target .
+# pip install --no-cache-dir --compile -r ../requirements.txt --target .
 echo "copying lambda function to deployment package"
 #cp  lambda_handler.py lambda_deployment_package/
 

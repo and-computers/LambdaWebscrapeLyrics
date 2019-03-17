@@ -90,13 +90,17 @@ def handler(event, context):
                 filename = song_link.text.replace(' ', '_').replace("'", '').replace('/', '')
                 filename += ".txt"
                 filename = os.path.join(BUCKETNAME, BARSDIR, artists_file_directory, filename)
-                filename = filename.encode('utf-8')
+                filename = str(filename.encode('utf-8'))
+
+                logger.info("Filename: {}".format(filename))
 
                 """
 				a lot of the unspecified excepts are just to catch annoying character encoding bs
 				that comes with webscraping
+                string casting because fs exists needs to be a string or there will
+                be external errors if the passed type is a byte-string
 				"""
-                if fs.exists(filename):
+                if fs.exists(str(filename)):
                     try:
                         logger.info('File {} already exists, skipping web request'.format(filename.encode('utf-8')))
                     except:
@@ -122,10 +126,10 @@ def handler(event, context):
                     pass
 
                 # https://stackoverflow.com/questions/12517451/automatically-creating-directories-with-file-output
-                if not fs.exists(os.path.dirname(filename)):
+                if not fs.exists(str(os.path.dirname(filename))):
                     logger.info('{} Does not exist.'.format(os.path.dirname(filename)))
                     try:
-                        fs.mkdir(os.path.dirname(filename))
+                        fs.mkdir(str(os.path.dirname(filename)))
                     except OSError as exc:  # Guard against race condition
                         if exc.errno != errno.EEXIST:
                             raise

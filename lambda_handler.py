@@ -9,6 +9,7 @@ https://gist.github.com/managedkaos/e3262b80154129cc9a976ee6ee943da3
 # Requests is a library that allows you to programmatically send out http requests
 # from botocore.vendored import requests
 import requests
+from requests.exceptions import ConnectionError
 
 # os is a library for doing operating system things, like looking through file directories
 import os
@@ -68,7 +69,11 @@ def handler(event, context):
         logger.info('Sleeping: {}'.format(pre_request_sleep))
         time.sleep(pre_request_sleep)
         # make a request for the data
-        r = requests.get(url, headers=headers)
+        try:
+            r = requests.get(url, headers=headers)
+        except ConnectionError as ce:
+            logger.info('{}'.format(ce))
+            continue
 
         # convert the response text to soup
         soup = BeautifulSoup(r.text, "lxml")
@@ -117,7 +122,11 @@ def handler(event, context):
                 this_sleep = SLEEP_TIME + random.uniform(NOISE[0], NOISE[1])
                 logger.info('Sleeping: {}'.format(this_sleep))
                 time.sleep(this_sleep)
-                response = requests.get(lyric_url, headers=headers)
+                try:
+                    response = requests.get(lyric_url, headers=headers)
+                except ConnectionError as ce:
+                    logger.info('{}'.format(ce))
+                    continue
                 new_soup = BeautifulSoup(response.text, "lxml")
 
                 try:

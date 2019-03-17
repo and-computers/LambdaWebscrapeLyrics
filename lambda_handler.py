@@ -34,8 +34,8 @@ logger.addHandler(ch)
 SLEEP_TIME = 1.212
 NOISE = (-0.438, 3.32)
 # act like a mac when requesting url
-headers = {'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) \
-AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.112 Safari/534.30"}
+headers = {
+    'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36"}
 #NOISE = (0,5)
 
 # TODO: create from scrape_config.csv
@@ -54,7 +54,7 @@ def handler(event, context):
 
     # artists_and_urls = zip(df.to_dict()['artist'].values(), df.to_dict()['url'].values())
 
-    artists_and_urls = zip(['coocoocal'], ['https://www.azlyrics.com/c/coocoocal.html'])
+    artists_and_urls = zip(['frankocean'], ['https://www.azlyrics.com/f/frankocean.html'])
 
     for artist_name, url in artists_and_urls:
         """

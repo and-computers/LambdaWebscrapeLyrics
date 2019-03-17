@@ -31,8 +31,8 @@ ch.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger.addHandler(ch)
 
-SLEEP_TIME = 9.212
-NOISE = (-8.438, 5.32)
+SLEEP_TIME = 1.212
+NOISE = (-0.438, 3.32)
 # act like a mac when requesting url
 headers = {'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) \
 AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.112 Safari/534.30"}
@@ -90,7 +90,7 @@ def handler(event, context):
                 filename = song_link.text.replace(' ', '_').replace("'", '').replace('/', '')
                 filename += ".txt"
                 filename = os.path.join(BUCKETNAME, BARSDIR, artists_file_directory, filename)
-                filename = str(filename.encode('utf-8'))
+                filename = str(filename)
 
                 logger.info("Filename: {}".format(filename))
 
@@ -100,7 +100,7 @@ def handler(event, context):
                 string casting because fs exists needs to be a string or there will
                 be external errors if the passed type is a byte-string
 				"""
-                if fs.exists(str(filename)):
+                if fs.exists(filename):
                     try:
                         logger.info('File {} already exists, skipping web request'.format(filename.encode('utf-8')))
                     except:
@@ -144,7 +144,7 @@ def handler(event, context):
                         logger.warning('IOError could not write filename: {}'.format(filename))
                         continue
                     try:
-                        f.write(lyric.text.encode('utf-8'))
+                        f.write(lyric.text)
                     except UnicodeError:
                         logger.warning('UnicodeError, Skipping: {}'.format(filename))
                         f.close()
@@ -154,7 +154,7 @@ def handler(event, context):
                 for song_panel_div in new_soup.find_all("div", {"class": "panel songlist-panel noprint"}):
                     try:
                         f.write('ALBUM INFO')
-                        f.write(song_panel_div.text.encode('utf-8'))
+                        f.write(song_panel_div.text)
                     except UnicodeError:
                         logger.warning('UnicodeError, Skipping')
                         f.close()

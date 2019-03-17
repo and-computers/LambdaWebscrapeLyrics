@@ -5,17 +5,9 @@ echo "beginning deployment script"
 echo "install requirements.txt"
 mkdir lambda_deployment_package
 cd lambda_deployment_package
+# install s3fs seperately because the dependencies are already in the lamdba env
 pip install --no-deps --no-cache-dir --compile s3fs --target .
-# pip install --no-cache-dir --compile -r ../requirements.txt --target .
-echo "copying lambda function to deployment package"
-#cp  lambda_handler.py lambda_deployment_package/
-
-
-# echo "removing provided AWS libraries, botocore and boto3"
-
-# rm -r lambda_deployment_package/boto3* 
-# rm -r lambda_deployment_package/botocore*
-# rm -r lambda_deployment_package/tox*
+pip install --no-cache-dir --compile -r ../requirements.txt --target .
 
 
 echo "zipping deployment package"

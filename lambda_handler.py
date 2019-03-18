@@ -8,6 +8,7 @@ https://gist.github.com/managedkaos/e3262b80154129cc9a976ee6ee943da3
 
 # Requests is a library that allows you to programmatically send out http requests
 # from botocore.vendored import requests
+import csv
 import requests
 from requests.exceptions import ConnectionError
 from requests.adapters import HTTPAdapter
@@ -63,7 +64,15 @@ def handler(event, context):
 
     # artists_and_urls = zip(df.to_dict()['artist'].values(), df.to_dict()['url'].values())
 
-    artists_and_urls = zip(['frankocean'], ['https://www.azlyrics.com/f/frankocean.html'])
+    # artists_and_urls = zip(['frankocean'], ['https://www.azlyrics.com/f/frankocean.html'])
+
+    lyric_links = os.path.join(BUCKETNAME, 'lyrics_sources', 'scrape_config.csv')
+    with fs.open(lyric_links, 'r') as f:
+        reader = csv.DictReader(f)
+
+        artist_urls = []
+        for row in reader:
+            artist_urls.append((row['artist'], row['url']))
 
     for artist_name, url in artists_and_urls:
         """

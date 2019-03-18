@@ -28,6 +28,8 @@ env_vars = ""
 for config_tuple in cfg.items('environment'):
     env_vars += "{k}={v},".format(k=config_tuple[0], v=config_tuple[1])
 
+if env_vars.endswith(","):
+    env_vars = env_vars[:-1]
 VARS_STR = VARS_STR_TEMPLATE.format(env_vars)
 logging.info("Parsed environment variables:\n{}".format(VARS_STR))
 

@@ -70,9 +70,9 @@ def handler(event, context):
     with fs.open(lyric_links, 'r') as f:
         reader = csv.DictReader(f)
 
-        artist_urls = []
+        artists_and_urls = []
         for row in reader:
-            artist_urls.append((row['artist'], row['url']))
+            artists_and_urls.append((row['artist'], row['url']))
 
     for artist_name, url in artists_and_urls:
         """

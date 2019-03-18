@@ -92,7 +92,7 @@ def deploy_brand_new_lambda():
         env=VARS_STR
     )
 
-    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
     if error:
         logging.error(error)
@@ -119,7 +119,7 @@ def update_existing_lambda():
         env=VARS_STR
     )
 
-    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
     if error:
         logging.error(error)

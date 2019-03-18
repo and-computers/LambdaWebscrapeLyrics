@@ -1,4 +1,4 @@
-import os
+import logging
 import configparser
 import subprocess
 import sys
@@ -12,12 +12,13 @@ RESOURCE_ROLE = sys.argv[3]
 cfg = configparser.ConfigParser()
 cfg.read('deployment_config.ini')
 
-import pdb
-pdb.set_trace()
 
 # parse lambda configuration parameters
+CONFIG_PARAMS = {}
 for config_tuple in cfg.items('configuration'):
-    pass
+	name = config_tuple[0]
+	val = config_tuple[1]
+	CONFIG_PARAMS[name] = val
 
 
 # https://stackoverflow.com/questions/5466451/how-can-i-print-literal-curly-brace-characters-in-python-string-and-also-use-fo#5466478
@@ -27,7 +28,7 @@ for config_tuple in cfg.items('environment'):
     env_vars += "{k}={v},".format(k=config_tuple[0], v=config_tuple[1])
 
 VARS_STR = VARS_STR_TEMPLATE.format(env_vars)
-print(VARS_STR)
+logging.info("Parsed environment variables:\n{}".format(VARS_STR))
 
 
 def is_func_new(funcname):
@@ -71,13 +72,13 @@ def deploy_brand_new_lambda():
 		AWS_SECRET_KEY=SECRET_KEY,
 		AWS_LAMBDA_ROLE=RESOURCE_ROLE,
 		isnew='yes',
-		funcname=funcname,
-		desc=desc,
-		runtime=runtime,
-		handler=handler,
-		region=region,
-		timeout=timeout,
-		mem=memory,
+		funcname=CONFIG_PARAMS['function-name'],
+		desc=CONFIG_PARAMS['description'],
+		runtime=CONFIG_PARAMS['runtime'],
+		handler=CONFIG_PARAMS['handler'],
+		region=CONFIG_PARAMS['region'],
+		timeout=CONFIG_PARAMS['timeout'],
+		mem=CONFIG_PARAMS['memory-size'],
 		env=VARS_STR
 		)
 
@@ -96,13 +97,13 @@ def update_existing_lambda():
 		AWS_SECRET_KEY=SECRET_KEY,
 		AWS_LAMBDA_ROLE=RESOURCE_ROLE,
 		isnew='no',
-		funcname=funcname,
-		desc=desc,
-		runtime=runtime,
-		handler=handler,
-		region=region,
-		timeout=timeout,
-		mem=memory,
+		funcname=CONFIG_PARAMS['function-name'],
+		desc=CONFIG_PARAMS['description'],
+		runtime=CONFIG_PARAMS['runtime'],
+		handler=CONFIG_PARAMS['handler'],
+		region=CONFIG_PARAMS['region'],
+		timeout=CONFIG_PARAMS['timeout'],
+		mem=CONFIG_PARAMS['memory-size'],
 		env=VARS_STR
 		)
 
@@ -110,8 +111,10 @@ def update_existing_lambda():
 	output, error = process.communicate()
 
 if is_func_new():
+	logging.info("Deploying New Function")
 	deploy_brand_new_lambda()
 else:
+	logging.info("Updating Existing Function")
 	update_existing_lambda()
 
 

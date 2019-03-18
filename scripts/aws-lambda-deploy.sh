@@ -65,9 +65,8 @@ AWS_ACCESS_KEY_ID=$ACCESS_KEY AWS_SECRET_ACCESS_KEY=$SECRET_KEY AWS_DEFAULT_REGI
 	--handler $HANDLER \
 	--timeout $TIMEOUT \
 	--memory-size $MEMSIZE \
-	--runtime $RUNTIME \
+	--runtime python3.6 \
 	--description $DESC \
-	--environment $ENV \
 	--role $RESOURCE_ROLE
 
 else

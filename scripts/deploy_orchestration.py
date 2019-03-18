@@ -38,6 +38,7 @@ def is_func_new(funcname):
     """
     determine if function being deployed is brand new or just needs updates
     """
+    return False
     bashCommand = "AWS_ACCESS_KEY_ID={ak} AWS_SECRET_ACCESS_KEY={sk} AWS_DEFAULT_REGION={reg} aws lambda list-functions".format(
         ak=ACCESS_KEY,
         sk=SECRET_KEY,

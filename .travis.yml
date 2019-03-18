@@ -10,7 +10,7 @@ script:
   - tox
 deploy:
   provider: script
-  script: bash scripts/aws-lambda-deploy.sh ${AWS_ACCESS_KEY} ${AWS_SECRET_KEY} ${AWS_LAMBDA_ROLE}
+  script: python scripts/deploy_orchestration.py ${AWS_ACCESS_KEY} ${AWS_SECRET_KEY} ${AWS_LAMBDA_ROLE}
   on:
     branch: master
   # access_key_id: ${AWS_ACCESS_KEY}

@@ -36,9 +36,14 @@ def is_func_new(funcname):
     """
     determine if function being deployed is brand new or just needs updates
     """
-    bashCommand = "aws lambda list-functions"
+    bashCommand = "AWS_ACCESS_KEY={ak} AWS_SECRET_ACCESS_KEY={sk} AWS_DEFAULT_REGION={reg} aws lambda list-functions".format(
+        ak=ACCESS_KEY,
+        sk=SECRET_KEY,
+        reg=CONFIG_PARAMS['region'])
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
+    if error:
+        logging.error(error)
     out_json = json.loads(output)
     for function_params in out_json['Functions']:
         if str(funcname) == str(function_params['FunctionName']):
@@ -86,6 +91,8 @@ def deploy_brand_new_lambda():
 
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
+    if error:
+        logging.error(error)
 
 
 def update_existing_lambda():
@@ -111,6 +118,8 @@ def update_existing_lambda():
 
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
+    if error:
+        logging.error(error)
 
 if is_func_new(CONFIG_PARAMS['function-name']):
     logging.info("Deploying New Function")

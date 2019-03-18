@@ -1,3 +1,4 @@
+import json
 import logging
 import configparser
 import subprocess
@@ -79,7 +80,7 @@ def deploy_brand_new_lambda():
         handler=CONFIG_PARAMS['handler'],
         region=CONFIG_PARAMS['region'],
         timeout=CONFIG_PARAMS['timeout'],
-        mem=CONFIG_PARAMS['memory-size'],
+        memsize=CONFIG_PARAMS['memory-size'],
         env=VARS_STR
     )
 
@@ -104,14 +105,14 @@ def update_existing_lambda():
         handler=CONFIG_PARAMS['handler'],
         region=CONFIG_PARAMS['region'],
         timeout=CONFIG_PARAMS['timeout'],
-        mem=CONFIG_PARAMS['memory-size'],
+        memsize=CONFIG_PARAMS['memory-size'],
         env=VARS_STR
     )
 
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
 
-if is_func_new():
+if is_func_new(CONFIG_PARAMS['function-name']):
     logging.info("Deploying New Function")
     deploy_brand_new_lambda()
 else:

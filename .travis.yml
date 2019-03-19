@@ -8,13 +8,11 @@ install:
 script:
   - tox
 deploy:
-  provider: script
-  script: python scripts/deploy_orchestration.py master ${AWS_LAMBDA_ROLE}
-  on:
-    branch: master
-  provider: script
-  script: python scripts/deploy_orchestration.py develop ${AWS_LAMBDA_ROLE}
-  on:
-    branch: develop
-
-
+  - provider: script
+    script: python scripts/deploy_orchestration.py master ${AWS_LAMBDA_ROLE}
+    on:
+      branch: master
+  - provider: script
+    script: python scripts/deploy_orchestration.py develop ${AWS_LAMBDA_ROLE}
+    on:
+      branch: develop

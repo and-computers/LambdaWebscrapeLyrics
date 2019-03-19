@@ -54,7 +54,7 @@ def handler(event, context):
 
     sess = requests.Session()
 
-    retries = Retry(total=5, backoff_factor=1.5, status_forcelist=[500, 501, 502, 503, 504])
+    retries = Retry(total=2, backoff_factor=1.5, status_forcelist=[500, 501, 502, 503, 504])
 
     sess.mount('http://', HTTPAdapter(max_retries=retries))
     sess.mount('https://', HTTPAdapter(max_retries=retries))

@@ -12,7 +12,6 @@ pip install --no-cache-dir --compile -r ../requirements.txt --target .
 
 echo "zipping deployment package"
 zip -r9 ../function.zip .
-# zip -r9 lambda_deployment_package.zip lambda_deployment_package
 cd ../
 zip -g function.zip lambda_handler.py
 
@@ -41,10 +40,21 @@ aws lambda create-function \
 	--memory-size $MEMSIZE \
 	--zip-file fileb://function.zip \
 	--runtime $RUNTIME \
-	--description $DESC \
-	--environment $ENV \
-	--role $RESOURCE_ROLE \
-	--revision-id $ALIAS
+	--environment "$ENV" \
+	--role "$RESOURCE_ROLE" \
+	--description "$DESC" \
+
+echo "creating/updating alias of $ALIAS" >&2
+aws lambda create-alias \
+	--function-name $FNAME \
+	--name "$ALIAS" \
+	--function-version \$LATEST
+
+aws lambda update-alias \
+	--function-name $FNAME \
+	--name "$ALIAS" \
+	--function-version \$LATEST
+
 
 elif [ $ISNEW == "no" ]
 then
@@ -55,17 +65,29 @@ aws lambda update-function-code \
 	--zip-file fileb://function.zip \
 	--publish 
 
-# update function configuration
+# update function configuration (echo to higher than std.out so its displayed)
+echo "updating function configuration" >&2
+
 aws lambda update-function-configuration \
 	--function-name "$FNAME" \
 	--handler "$HANDLER" \
 	--timeout "$TIMEOUT" \
 	--memory-size $MEMSIZE \
-	--runtime "${RUNTIME}" \
-	--description "${DESC}" \
-	--environment "${ENV}" \
+	--runtime $RUNTIME \
+	--environment "$ENV" \
 	--role "${RESOURCE_ROLE}" \
-	--revision-id $ALIAS
+	--description "$DESC" \
+	
+echo "creating/updating alias of $ALIAS" >&2
+aws lambda create-alias \
+	--function-name $FNAME \
+	--name "$ALIAS" \
+	--function-version \$LATEST
+
+aws lambda update-alias \
+	--function-name $FNAME \
+	--name "$ALIAS" \
+	--function-version \$LATEST
 
 else
 echo "not a new function. but not an old function. this line should not be hit."

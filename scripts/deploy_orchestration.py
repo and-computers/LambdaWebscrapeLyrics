@@ -30,21 +30,20 @@ for config_tuple in cfg.items('environment'):
 if env_vars.endswith(","):
     env_vars = env_vars[:-1]
 VARS_STR = VARS_STR_TEMPLATE.format(env_vars)
-logging.info("Parsed environment variables:\n{}".format(VARS_STR))
+print("Parsed environment variables:\n{}".format(VARS_STR))
 
 
 def is_func_new(funcname):
     """
     determine if function being deployed is brand new or just needs updates
     """
-    # AWS_ACCESS_KEY_ID={ak} AWS_SECRET_ACCESS_KEY={sk} AWS_DEFAULT_REGION={reg}
     bashCommand = "aws lambda get-function \
     --function-name {fname}".format(
         fname=funcname
     )
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
-    print(output)
+    # print(output)
     # if the error is raised it means the functions does not exist
     if error:
         logging.error(error)
@@ -72,7 +71,7 @@ def deploy_brand_new_lambda():
     {isnew} \
     {AWS_LAMBDA_ROLE} \
     {alias} \
-    {funcname} {handler} {timeout} {memsize} {desc} {env} {runtime} {region}".format(
+    {funcname} {handler} {timeout} {memsize} '{desc}' '{env}' '{runtime}' '{region}'".format(
         AWS_LAMBDA_ROLE=RESOURCE_ROLE,
         isnew='yes',
         alias=ALIAS,
@@ -86,7 +85,7 @@ def deploy_brand_new_lambda():
         env=VARS_STR
     )
 
-    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
     output, error = process.communicate()
     print(output)
     if error:
@@ -98,7 +97,7 @@ def update_existing_lambda():
     {isnew} \
     {AWS_LAMBDA_ROLE} \
     {alias} \
-    {funcname} {handler} {timeout} {memsize} {desc} {env} {runtime} {region}".format(
+    {funcname} {handler} {timeout} {memsize} '{desc}' '{env}' '{runtime}' '{region}'".format(
         AWS_LAMBDA_ROLE=RESOURCE_ROLE,
         isnew='no',
         alias=ALIAS,
@@ -112,9 +111,9 @@ def update_existing_lambda():
         env=VARS_STR
     )
 
-    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    process = subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)
     output, error = process.communicate()
-    print(output)
+    # print(output)
     if error:
         logging.error(error)
 

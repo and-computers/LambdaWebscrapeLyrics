@@ -12,21 +12,9 @@ deploy:
   script: python scripts/deploy_orchestration.py master ${AWS_LAMBDA_ROLE}
   on:
     branch: master
-deploy:
   provider: script
   script: python scripts/deploy_orchestration.py develop ${AWS_LAMBDA_ROLE}
   on:
     branch: develop
-  # access_key_id: ${AWS_ACCESS_KEY}
-  # secret_access_key: ${AWS_SECRET_KEY}
-  # function_name: "webscrape-lyrics"
-  # region: "us-east-2"
-  # role: ${AWS_LAMBDA_ROLE}
-  # runtime: "python3.6"
-  # handler_name: "handler"
-  # module_name: "lambda_handler"
-  # description: "Automated Webscraping Lyrics"
-  # memory_size: 128
-  # timeout: 60
 
 

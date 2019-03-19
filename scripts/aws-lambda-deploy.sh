@@ -39,7 +39,8 @@ REGION=${12}
 if [ $ISNEW == "yes" ]
 then
 echo "deploying brand new function"
-AWS_ACCESS_KEY_ID=$ACCESS_KEY AWS_SECRET_ACCESS_KEY=$SECRET_KEY AWS_DEFAULT_REGION=$REGION aws lambda create-function \
+# AWS_ACCESS_KEY_ID=$ACCESS_KEY AWS_SECRET_ACCESS_KEY=$SECRET_KEY AWS_DEFAULT_REGION=$REGION 
+aws lambda create-function \
 	--function-name $FNAME \
 	--handler $HANDLER \
 	--timeout $TIMEOUT \

@@ -38,13 +38,14 @@ def is_func_new(funcname):
     """
     determine if function being deployed is brand new or just needs updates
     """
-    bashCommand = "AWS_ACCESS_KEY_ID={ak} AWS_SECRET_ACCESS_KEY={sk} AWS_DEFAULT_REGION={reg} aws lambda get-function \
+    # AWS_ACCESS_KEY_ID={ak} AWS_SECRET_ACCESS_KEY={sk} AWS_DEFAULT_REGION={reg}
+    bashCommand = "aws lambda get-function \
     --function-name {fname}".format(
         ak=ACCESS_KEY,
         sk=SECRET_KEY,
         reg=CONFIG_PARAMS['region'],
         fname=funcname)
-    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
     print(output)
     # if the error is raised it means the functions does not exist
@@ -125,6 +126,7 @@ def update_existing_lambda():
     print(output)
     if error:
         logging.error(error)
+
 
 if is_func_new(CONFIG_PARAMS['function-name']):
     logging.info("Deploying New Function")

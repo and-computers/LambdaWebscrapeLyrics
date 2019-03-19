@@ -54,20 +54,23 @@ elif [ $ISNEW == "no" ]
 then
 echo "updating function"
 # update function code
-AWS_ACCESS_KEY_ID=$ACCESS_KEY AWS_SECRET_ACCESS_KEY=$SECRET_KEY AWS_DEFAULT_REGION=$REGION aws lambda update-function-code \
-	--function-name $FNAME \
+# AWS_ACCESS_KEY_ID=$ACCESS_KEY AWS_SECRET_ACCESS_KEY=$SECRET_KEY AWS_DEFAULT_REGION=$REGION aws lambda update-function-code \
+aws lambda update-function-code \
+	--function-name "${FNAME}" \
 	--zip-file fileb://function.zip \
 	--publish 
 
 # update function configuration
-AWS_ACCESS_KEY_ID=$ACCESS_KEY AWS_SECRET_ACCESS_KEY=$SECRET_KEY AWS_DEFAULT_REGION=$REGION aws lambda update-function-configuration \
-	--function-name $FNAME \
-	--handler $HANDLER \
-	--timeout $TIMEOUT \
+# AWS_ACCESS_KEY_ID=$ACCESS_KEY AWS_SECRET_ACCESS_KEY=$SECRET_KEY AWS_DEFAULT_REGION=$REGION aws lambda update-function-configuration \
+aws lambda update-function-configuration \
+	--function-name "$FNAME" \
+	--handler "$HANDLER" \
+	--timeout "$TIMEOUT" \
 	--memory-size $MEMSIZE \
-	--runtime python3.6 \
-	--description $DESC \
-	--role $RESOURCE_ROLE
+	--runtime "python3.6" \
+	--description "${DESC}" \
+	--environment "${ENV}" \
+	--role "${RESOURCE_ROLE}"
 
 else
 echo "not a new function. but not an old function. this line should not be hit."

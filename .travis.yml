@@ -2,7 +2,6 @@ language: python
 python:
   - "3.6"
 install:
-  # - pip install -r requirements.txt
   - pip install awscli
   - pip install tox
   - pip install ConfigParser
@@ -10,9 +9,14 @@ script:
   - tox
 deploy:
   provider: script
-  script: python scripts/deploy_orchestration.py ${AWS_ACCESS_KEY} ${AWS_SECRET_KEY} ${AWS_LAMBDA_ROLE}
+  script: python scripts/deploy_orchestration.py master ${AWS_LAMBDA_ROLE}
   on:
     branch: master
+deploy:
+  provider: script
+  script: python scripts/deploy_orchestration.py develop ${AWS_LAMBDA_ROLE}
+  on:
+    branch: develop
   # access_key_id: ${AWS_ACCESS_KEY}
   # secret_access_key: ${AWS_SECRET_KEY}
   # function_name: "webscrape-lyrics"

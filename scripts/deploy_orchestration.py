@@ -40,10 +40,8 @@ def is_func_new(funcname):
     # AWS_ACCESS_KEY_ID={ak} AWS_SECRET_ACCESS_KEY={sk} AWS_DEFAULT_REGION={reg}
     bashCommand = "aws lambda get-function \
     --function-name {fname}".format(
-        ak=ACCESS_KEY,
-        sk=SECRET_KEY,
-        reg=CONFIG_PARAMS['region'],
-        fname=funcname)
+        fname=funcname
+    )
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
     print(output)

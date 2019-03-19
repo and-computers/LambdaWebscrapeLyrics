@@ -5,9 +5,8 @@ import subprocess
 import sys
 
 
-ACCESS_KEY = sys.argv[1]
-SECRET_KEY = sys.argv[2]
-RESOURCE_ROLE = sys.argv[3]
+ALIAS = sys.argv[1]
+RESOURCE_ROLE = sys.argv[2]
 
 
 cfg = configparser.ConfigParser()
@@ -57,32 +56,28 @@ def is_func_new(funcname):
 
 def deploy_brand_new_lambda():
     """
-    ACCESS_KEY=$1
-    SECRET_KEY=$2
-    RESOURCE_ROLE=$3
+    ISNEW=$1
+    RESOURCE_ROLE=$2
+    ALIAS=$3
 
-    ISNEW=$4
-
-    FNAME=$5
-    HANDLER=$6
-    TIMEOUT=$7
-    MEMSIZE=$8
-    DESC=$9
-    ENV=${10}
-    RUNTIME=${11}
-    REGION=${12}
+    FNAME=$4
+    HANDLER=$5
+    TIMEOUT=$6
+    MEMSIZE=$7
+    DESC=$8
+    ENV=$9
+    RUNTIME=${10}
+    REGION=${11}
     """
 
     bashCommand = "bash scripts/aws-lambda-deploy.sh \
-    {AWS_ACCESS_KEY} \
-    {AWS_SECRET_KEY} \
-    {AWS_LAMBDA_ROLE} \
     {isnew} \
+    {AWS_LAMBDA_ROLE} \
+    {alias} \
     {funcname} {handler} {timeout} {memsize} {desc} {env} {runtime} {region}".format(
-        AWS_ACCESS_KEY=ACCESS_KEY,
-        AWS_SECRET_KEY=SECRET_KEY,
         AWS_LAMBDA_ROLE=RESOURCE_ROLE,
         isnew='yes',
+        alias=ALIAS,
         funcname=CONFIG_PARAMS['function-name'],
         desc=CONFIG_PARAMS['description'],
         runtime=CONFIG_PARAMS['runtime'],
@@ -102,15 +97,13 @@ def deploy_brand_new_lambda():
 
 def update_existing_lambda():
     bashCommand = "bash scripts/aws-lambda-deploy.sh \
-    {AWS_ACCESS_KEY} \
-    {AWS_SECRET_KEY} \
-    {AWS_LAMBDA_ROLE} \
     {isnew} \
+    {AWS_LAMBDA_ROLE} \
+    {alias} \
     {funcname} {handler} {timeout} {memsize} {desc} {env} {runtime} {region}".format(
-        AWS_ACCESS_KEY=ACCESS_KEY,
-        AWS_SECRET_KEY=SECRET_KEY,
         AWS_LAMBDA_ROLE=RESOURCE_ROLE,
         isnew='no',
+        alias=ALIAS,
         funcname=CONFIG_PARAMS['function-name'],
         desc=CONFIG_PARAMS['description'],
         runtime=CONFIG_PARAMS['runtime'],

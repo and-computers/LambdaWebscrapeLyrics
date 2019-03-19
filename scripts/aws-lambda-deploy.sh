@@ -17,29 +17,23 @@ cd ../
 zip -g function.zip lambda_handler.py
 
 
-# echo "removing package folder"
-# rm -r lambda_deployment_package
+ISNEW=$1
+RESOURCE_ROLE=$2
+ALIAS=$3
 
-ACCESS_KEY=$1
-SECRET_KEY=$2
-RESOURCE_ROLE=$3
-
-ISNEW=$4
-
-FNAME=$5
-HANDLER=$6
-TIMEOUT=$7
-MEMSIZE=$8
-DESC=$9
-ENV=${10}
-RUNTIME=${11}
-REGION=${12}
+FNAME=$4
+HANDLER=$5
+TIMEOUT=$6
+MEMSIZE=$7
+DESC=$8
+ENV=$9
+RUNTIME=${10}
+REGION=${11}
 
 
 if [ $ISNEW == "yes" ]
 then
 echo "deploying brand new function"
-# AWS_ACCESS_KEY_ID=$ACCESS_KEY AWS_SECRET_ACCESS_KEY=$SECRET_KEY AWS_DEFAULT_REGION=$REGION 
 aws lambda create-function \
 	--function-name $FNAME \
 	--handler $HANDLER \
@@ -49,29 +43,29 @@ aws lambda create-function \
 	--runtime $RUNTIME \
 	--description $DESC \
 	--environment $ENV \
-	--role $RESOURCE_ROLE
+	--role $RESOURCE_ROLE \
+	--revision-id $ALIAS
 
 elif [ $ISNEW == "no" ]
 then
 echo "updating function"
 # update function code
-# AWS_ACCESS_KEY_ID=$ACCESS_KEY AWS_SECRET_ACCESS_KEY=$SECRET_KEY AWS_DEFAULT_REGION=$REGION aws lambda update-function-code \
 aws lambda update-function-code \
 	--function-name "${FNAME}" \
 	--zip-file fileb://function.zip \
 	--publish 
 
 # update function configuration
-# AWS_ACCESS_KEY_ID=$ACCESS_KEY AWS_SECRET_ACCESS_KEY=$SECRET_KEY AWS_DEFAULT_REGION=$REGION aws lambda update-function-configuration \
 aws lambda update-function-configuration \
 	--function-name "$FNAME" \
 	--handler "$HANDLER" \
 	--timeout "$TIMEOUT" \
 	--memory-size $MEMSIZE \
-	--runtime "python3.6" \
+	--runtime "${RUNTIME}" \
 	--description "${DESC}" \
 	--environment "${ENV}" \
-	--role "${RESOURCE_ROLE}"
+	--role "${RESOURCE_ROLE}" \
+	--revision-id $ALIAS
 
 else
 echo "not a new function. but not an old function. this line should not be hit."

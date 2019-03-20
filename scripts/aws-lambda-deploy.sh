@@ -1,20 +1,5 @@
 #!/bin/bash
 
-echo "beginning deployment script"
-
-echo "install requirements.txt"
-mkdir lambda_deployment_package
-cd lambda_deployment_package
-# install s3fs seperately because the dependencies are already in the lamdba env
-pip install --no-deps --no-cache-dir --compile s3fs --target .
-pip install --no-cache-dir --compile -r ../requirements.txt --target .
-
-
-echo "zipping deployment package"
-zip -r9 ../function.zip .
-cd ../
-zip -g function.zip lambda_handler.py
-
 
 ISNEW=$1
 RESOURCE_ROLE=$2
@@ -30,9 +15,34 @@ RUNTIME=${10}
 REGION=${11}
 
 
-if [ $ISNEW == "yes" ]
+echo "beginning deployment script" >&2
+
+echo "install requirements.txt"
+mkdir lambda_deployment_package
+cd lambda_deployment_package
+# install s3fs seperately because the dependencies are already in the lamdba env
+pip install --no-deps --no-cache-dir --compile s3fs --target .
+pip install --no-cache-dir --compile -r ../requirements.txt --target .
+
+
+echo "zipping deployment package" >&2
+zip -r9 ../function.zip .
+cd ../
+
+# get handler file name from
+IFS='.' read -r HANDLER_FILE_NAME string <<< "$HANDLER"
+
+echo "Handler Name $HANDLER_FILE_NAME" >&2
+
+# assumes its a .py # TODO, dynamic determine or wild-card
+zip -g function.zip "$HANDLER_FILE_NAME.py"
+
+
+
+
+if [ $ISNEW == "True" ]
 then
-echo "deploying brand new function"
+echo "deploying brand new function" >&2
 aws lambda create-function \
 	--function-name $FNAME \
 	--handler $HANDLER \
@@ -56,9 +66,9 @@ aws lambda update-alias \
 	--function-version \$LATEST
 
 
-elif [ $ISNEW == "no" ]
+elif [ $ISNEW == "False" ]
 then
-echo "updating function"
+echo "updating function" >&2
 # update function code
 aws lambda update-function-code \
 	--function-name "${FNAME}" \
@@ -90,7 +100,7 @@ aws lambda update-alias \
 	--function-version \$LATEST
 
 else
-echo "not a new function. but not an old function. this line should not be hit."
+echo "not a new function. but not an old function. this line should not be hit." >&2
 fi
 
 

@@ -51,7 +51,7 @@ def is_func_new(funcname):
     return False
 
 
-def deploy_brand_new_lambda():
+def deploy_lambda(new):
     """
     ISNEW=$1
     RESOURCE_ROLE=$2
@@ -66,40 +66,13 @@ def deploy_brand_new_lambda():
     RUNTIME=${10}
     REGION=${11}
     """
-
     bashCommand = "bash scripts/aws-lambda-deploy.sh \
     {isnew} \
     {AWS_LAMBDA_ROLE} \
     {alias} \
     {funcname} {handler} {timeout} {memsize} '{desc}' '{env}' '{runtime}' '{region}'".format(
         AWS_LAMBDA_ROLE=RESOURCE_ROLE,
-        isnew='yes',
-        alias=ALIAS,
-        funcname=CONFIG_PARAMS['function-name'],
-        desc=CONFIG_PARAMS['description'],
-        runtime=CONFIG_PARAMS['runtime'],
-        handler=CONFIG_PARAMS['handler'],
-        region=CONFIG_PARAMS['region'],
-        timeout=CONFIG_PARAMS['timeout'],
-        memsize=CONFIG_PARAMS['memory-size'],
-        env=VARS_STR
-    )
-
-    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
-    output, error = process.communicate()
-    print(output)
-    if error:
-        logging.error(error)
-
-
-def update_existing_lambda():
-    bashCommand = "bash scripts/aws-lambda-deploy.sh \
-    {isnew} \
-    {AWS_LAMBDA_ROLE} \
-    {alias} \
-    {funcname} {handler} {timeout} {memsize} '{desc}' '{env}' '{runtime}' '{region}'".format(
-        AWS_LAMBDA_ROLE=RESOURCE_ROLE,
-        isnew='no',
+        isnew=new,
         alias=ALIAS,
         funcname=CONFIG_PARAMS['function-name'],
         desc=CONFIG_PARAMS['description'],
@@ -117,10 +90,4 @@ def update_existing_lambda():
     if error:
         logging.error(error)
 
-
-if is_func_new(CONFIG_PARAMS['function-name']):
-    logging.info("Deploying New Function")
-    deploy_brand_new_lambda()
-else:
-    logging.info("Updating Existing Function")
-    update_existing_lambda()
+deploy_lambda(new=is_func_new(CONFIG_PARAMS['function-name']))

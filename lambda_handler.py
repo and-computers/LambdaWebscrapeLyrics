@@ -9,10 +9,16 @@ https://gist.github.com/managedkaos/e3262b80154129cc9a976ee6ee943da3
 # Requests is a library that allows you to programmatically send out http requests
 # from botocore.vendored import requests
 import csv
-import requests
-from requests.exceptions import ConnectionError
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+# import requests
+# from requests.exceptions import ConnectionError
+# from requests.adapters import HTTPAdapter
+# from requests.packages.urllib3.util.retry import Retry
+
+# requests inside botocore really shouldn't be used. but curious if performance is better
+from botocore.vendored import requests
+from botocore.vendored.requests.exceptions import ConnectionError
+from botocore.vendored.requests.adapters import HTTPAdapter
+from botocore.vendored.requests.packages.urllib3.util.retry import Retry
 
 # os is a library for doing operating system things, like looking through file directories
 import os

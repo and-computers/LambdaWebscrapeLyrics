@@ -74,7 +74,7 @@ def handler(event, context):
         for row in reader:
             artists_and_urls.append((row['artist'], row['url']))
 
-    for artist_name, url in artists_and_urls:
+    for artist_folder_name, url in artists_and_urls:
         """
         sleep before request
         you could check if the artists directory exists and skip first
@@ -96,8 +96,6 @@ def handler(event, context):
         soup = BeautifulSoup(r.text, "lxml")
 
         # get the songs and links to the lyrics
-        artists_file_directory = url.split('/')[-1].replace('.html', '')
-        artists_file_directory = artist_name
         for song_link in soup.find_all("a", href=True):
             if len(song_link.text) == 0:
                 continue
@@ -109,7 +107,7 @@ def handler(event, context):
 
                 filename = song_link.text.replace(' ', '_').replace("'", '').replace('/', '')
                 filename += ".txt"
-                filename = os.path.join(BUCKETNAME, BARSDIR, artists_file_directory, filename)
+                filename = os.path.join(BUCKETNAME, BARSDIR, artist_folder_name, filename)
                 filename = str(filename)
 
                 logger.info("Filename: {}".format(filename))

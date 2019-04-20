@@ -56,7 +56,7 @@ BARSDIR = "just-lyrics"
 
 def handler(event, context):
 
-    today_day = time.localtime().tm_mday()
+    today_day = time.localtime().tm_mday
 
     fs = s3fs.S3FileSystem()
 

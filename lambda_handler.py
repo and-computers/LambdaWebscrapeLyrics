@@ -9,10 +9,16 @@ https://gist.github.com/managedkaos/e3262b80154129cc9a976ee6ee943da3
 # Requests is a library that allows you to programmatically send out http requests
 # from botocore.vendored import requests
 import csv
-import requests
-from requests.exceptions import ConnectionError
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+# import requests
+# from requests.exceptions import ConnectionError
+# from requests.adapters import HTTPAdapter
+# from requests.packages.urllib3.util.retry import Retry
+
+# requests inside botocore really shouldn't be used. but curious if performance is better
+from botocore.vendored import requests
+from botocore.vendored.requests.exceptions import ConnectionError
+from botocore.vendored.requests.adapters import HTTPAdapter
+from botocore.vendored.requests.packages.urllib3.util.retry import Retry
 
 # os is a library for doing operating system things, like looking through file directories
 import os
@@ -74,7 +80,7 @@ def handler(event, context):
         for row in reader:
             artists_and_urls.append((row['artist'], row['url']))
 
-    for artist_name, url in artists_and_urls:
+    for artist_folder_name, url in artists_and_urls:
         """
         sleep before request
         you could check if the artists directory exists and skip first
@@ -96,8 +102,6 @@ def handler(event, context):
         soup = BeautifulSoup(r.text, "lxml")
 
         # get the songs and links to the lyrics
-        artists_file_directory = url.split('/')[-1].replace('.html', '')
-        artists_file_directory = artist_name
         for song_link in soup.find_all("a", href=True):
             if len(song_link.text) == 0:
                 continue
@@ -109,7 +113,7 @@ def handler(event, context):
 
                 filename = song_link.text.replace(' ', '_').replace("'", '').replace('/', '')
                 filename += ".txt"
-                filename = os.path.join(BUCKETNAME, BARSDIR, artists_file_directory, filename)
+                filename = os.path.join(BUCKETNAME, BARSDIR, artist_folder_name, filename)
                 filename = str(filename)
 
                 logger.info("Filename: {}".format(filename))

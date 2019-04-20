@@ -9,16 +9,16 @@ https://gist.github.com/managedkaos/e3262b80154129cc9a976ee6ee943da3
 # Requests is a library that allows you to programmatically send out http requests
 # from botocore.vendored import requests
 import csv
-# import requests
-# from requests.exceptions import ConnectionError
-# from requests.adapters import HTTPAdapter
-# from requests.packages.urllib3.util.retry import Retry
+import requests
+from requests.exceptions import ConnectionError
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 # requests inside botocore really shouldn't be used. but curious if performance is better
-from botocore.vendored import requests
-from botocore.vendored.requests.exceptions import ConnectionError
-from botocore.vendored.requests.adapters import HTTPAdapter
-from botocore.vendored.requests.packages.urllib3.util.retry import Retry
+# from botocore.vendored import requests
+# from botocore.vendored.requests.exceptions import ConnectionError
+# from botocore.vendored.requests.adapters import HTTPAdapter
+# from botocore.vendored.requests.packages.urllib3.util.retry import Retry
 
 # os is a library for doing operating system things, like looking through file directories
 import os
@@ -41,8 +41,8 @@ ch.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger.addHandler(ch)
 
-SLEEP_TIME = 1.212
-NOISE = (-0.438, 3.32)
+SLEEP_TIME = 5.212
+NOISE = (-4.438, 4.32)
 # act like a mac when requesting url
 headers = {
     'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36"}
@@ -56,11 +56,13 @@ BARSDIR = "just-lyrics"
 
 def handler(event, context):
 
+    today_day = time.localtime().tm_mday()
+
     fs = s3fs.S3FileSystem()
 
     sess = requests.Session()
 
-    retries = Retry(total=2, backoff_factor=1.5, status_forcelist=[500, 501, 502, 503, 504])
+    retries = Retry(total=2, backoff_factor=2.5, status_forcelist=[500, 501, 502, 503, 504])
 
     sess.mount('http://', HTTPAdapter(max_retries=retries))
     sess.mount('https://', HTTPAdapter(max_retries=retries))
@@ -80,7 +82,9 @@ def handler(event, context):
         for row in reader:
             artists_and_urls.append((row['artist'], row['url']))
 
-    for artist_folder_name, url in artists_and_urls:
+    # pick a random artist to start with so everyone gets a turn
+
+    for artist_folder_name, url in artists_and_urls[today_day:]:
         """
         sleep before request
         you could check if the artists directory exists and skip first
@@ -95,10 +99,10 @@ def handler(event, context):
         try:
             r = sess.get(url, headers=headers)
         except ConnectionError as ce:
-            logger.info('{}'.format(ce))
+            logger.info('Errored on:{} \n{}'.format(url, ce))
             continue
 
-        # convert the response text to soup
+        # convert the response text to soup use lxml parser
         soup = BeautifulSoup(r.text, "lxml")
 
         # get the songs and links to the lyrics
@@ -113,6 +117,8 @@ def handler(event, context):
 
                 filename = song_link.text.replace(' ', '_').replace("'", '').replace('/', '')
                 filename += ".txt"
+                if filename.lower() == "submit.txt":
+                    continue
                 filename = os.path.join(BUCKETNAME, BARSDIR, artist_folder_name, filename)
                 filename = str(filename)
 

@@ -198,5 +198,5 @@ def handle(event, context):
 
 if __name__ == "__main__":
 
-    hanldle()
+    handle()
 
